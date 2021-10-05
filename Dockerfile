@@ -1,14 +1,14 @@
-FROM hashicorp/terraform:0.15.1 AS terraform
+FROM hashicorp/terraform:1.0.8 AS terraform
 
 FROM debian:buster-slim
 
-ARG KUBECTL_VERSION=1.20.6
-ARG HELM_VERSION=3.5.4
+ARG KUBECTL_VERSION=1.21.5
+ARG HELM_VERSION=3.7.0
 ARG HELM_DIFF_VERSION=3.1.3
-ARG HELM_SECRETS_VERSION=3.6.1
-ARG HELMFILE_VERSION=0.138.7
+ARG HELM_SECRETS_VERSION=3.8.3
+ARG HELMFILE_VERSION=0.141.0
 ARG HELM_S3_VERSION=0.10.0
-ARG HELM_GIT_VERSION=0.8.1
+ARG HELM_GIT_VERSION=0.10.0
 ARG AWS_CLI_VERSION=2.2.0
 
 WORKDIR /
@@ -39,7 +39,7 @@ RUN helm version
 
 RUN helm plugin install https://github.com/databus23/helm-diff --version ${HELM_DIFF_VERSION} && \
     helm plugin install https://github.com/jkroepke/helm-secrets --version ${HELM_SECRETS_VERSION} && \
-    helm plugin install https://github.com/hypnoglow/helm-s3.git --version ${HELM_S3_VERSION} && \
+    helm plugin install https://github.com/hypnoglow/helm-s3 --version ${HELM_S3_VERSION} && \
     helm plugin install https://github.com/aslafy-z/helm-git --version ${HELM_GIT_VERSION}
 
 ADD https://github.com/roboll/helmfile/releases/download/v${HELMFILE_VERSION}/helmfile_linux_amd64 /bin/helmfile
@@ -49,4 +49,4 @@ RUN helmfile version
 COPY --from=terraform /bin/terraform /bin/terraform
 RUN terraform version
 
-ENTRYPOINT ["/bin/helmfile"]
+ENTRYPOINT ["/bin/bash"]
