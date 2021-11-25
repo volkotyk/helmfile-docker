@@ -1,15 +1,16 @@
-FROM hashicorp/terraform:1.0.8 AS terraform
+FROM hashicorp/terraform:1.0.11 AS terraform
 
 FROM debian:buster-slim
 
-ARG KUBECTL_VERSION=1.21.5
-ARG HELM_VERSION=3.7.0
+ARG KUBECTL_VERSION=1.21.7
+ARG HELM_VERSION=3.7.1
 ARG HELM_DIFF_VERSION=3.1.3
-ARG HELM_SECRETS_VERSION=3.8.3
-ARG HELMFILE_VERSION=0.141.0
+ARG HELM_SECRETS_VERSION=3.11.0
+ARG HELMFILE_VERSION=0.142.0
 ARG HELM_S3_VERSION=0.10.0
-ARG HELM_GIT_VERSION=0.10.0
+ARG HELM_GIT_VERSION=0.11.1
 ARG AWS_CLI_VERSION=2.2.0
+ARG JX_RELEASE_VERSION_V=2.5.1
 
 WORKDIR /
 
@@ -27,7 +28,7 @@ ADD https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION
 RUN chmod +x /usr/local/bin/kubectl
 RUN kubectl version --client
 
-ADD https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/aws-iam-authenticator /usr/local/bin/aws-iam-authenticator
+ADD https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/aws-iam-authenticator /usr/local/bin/aws-iam-authenticator
 RUN chmod +x /usr/local/bin/aws-iam-authenticator
 RUN aws-iam-authenticator version
 
@@ -36,6 +37,11 @@ RUN tar -zxvf /tmp/helm* -C /tmp \
   && mv /tmp/linux-amd64/helm /bin/helm \
   && rm -rf /tmp/*
 RUN helm version
+
+ADD https://github.com/jenkins-x-plugins/jx-release-version/releases/download/v${JX_RELEASE_VERSION_V}/jx-release-version-linux-amd64.tar.gz /tmp
+RUN tar -zxvf /tmp/jx-release* -C /tmp \
+  && mv /tmp/jx-release-version /usr/local/bin \
+RUN jx-release-version -version
 
 RUN helm plugin install https://github.com/databus23/helm-diff --version ${HELM_DIFF_VERSION} && \
     helm plugin install https://github.com/jkroepke/helm-secrets --version ${HELM_SECRETS_VERSION} && \

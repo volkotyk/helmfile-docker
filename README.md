@@ -10,3 +10,14 @@ A Docker image containing [Helm](https://github.com/helm/helm), [Helmfile](https
 It also includes kubectl and the aws-iam-authenticator, so it works with Amazon EKS.
 
 It is built with Docker Hub Builds and pushed to [cablespaghetti/helmfile-docker](https://hub.docker.com/r/cablespaghetti/helmfile-docker)
+
+
+Create:
+
+`git clone https://github.com/volkotyk/helmfile-docker.git`
+
+`docker build -t harley4ik/helmfile-docker .`
+
+`docker tag cfeba1846293 harley4ik/helmfile-docker:kctl1.21`
+
+`docker push harley4ik/helmfile-docker:latest`
