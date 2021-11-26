@@ -11,6 +11,7 @@ ARG HELM_S3_VERSION=0.10.0
 ARG HELM_GIT_VERSION=0.11.1
 ARG AWS_CLI_VERSION=2.4.1
 ARG JX_RELEASE_VERSION_V=2.5.1
+ARG YQ_VERSION=4.15.1
 
 WORKDIR /
 
@@ -51,6 +52,11 @@ RUN helm plugin install https://github.com/databus23/helm-diff --version ${HELM_
 ADD https://github.com/roboll/helmfile/releases/download/v${HELMFILE_VERSION}/helmfile_linux_amd64 /bin/helmfile
 RUN chmod 0755 /bin/helmfile
 RUN helmfile version
+
+RUN curl -LO https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_amd64  \
+  && mv ./yq_linux_amd64 /usr/bin/yq  \
+  && chmod +x /usr/bin/yq
+RUN yq -v
 
 COPY --from=terraform /bin/terraform /bin/terraform
 RUN terraform version
