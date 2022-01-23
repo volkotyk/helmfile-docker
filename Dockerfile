@@ -1,21 +1,21 @@
-FROM hashicorp/terraform:1.0.11 AS terraform
+FROM hashicorp/terraform:1.1.4 AS terraform
 
-FROM debian:buster-slim
+FROM debian:bullseye-slim
 
-ARG KUBECTL_VERSION=1.21.7
-ARG HELM_VERSION=3.7.1
-ARG HELM_DIFF_VERSION=3.1.3
+ARG KUBECTL_VERSION=1.21.9
+ARG HELM_VERSION=3.7.2
+ARG HELM_DIFF_VERSION=3.4.1
 ARG HELM_SECRETS_VERSION=3.11.0
-ARG HELMFILE_VERSION=0.142.0
+ARG HELMFILE_VERSION=0.143.0
 ARG HELM_S3_VERSION=0.10.0
 ARG HELM_GIT_VERSION=0.11.1
 ARG AWS_CLI_VERSION=2.4.1
 ARG JX_RELEASE_VERSION_V=2.5.1
-ARG YQ_VERSION=4.15.1
+ARG YQ_VERSION=4.17.2
 
 WORKDIR /
 
-RUN apt-get update && apt-get install -y git gnupg curl gettext jq unzip sudo python3-pip
+RUN apt update && apt install -y git gnupg curl gettext jq unzip sudo python3-pip
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-${AWS_CLI_VERSION}.zip" -o "awscliv2.zip" \
   && unzip awscliv2.zip \
   && ./aws/install \
@@ -56,7 +56,7 @@ RUN helmfile version
 RUN curl -LO https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_amd64  \
   && mv ./yq_linux_amd64 /usr/bin/yq  \
   && chmod +x /usr/bin/yq
-RUN yq -v
+RUN yq -V
 
 COPY --from=terraform /bin/terraform /bin/terraform
 RUN terraform version
